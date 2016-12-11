@@ -8,6 +8,9 @@ var bingApiKey = process.env.bingApiKey;
 var secret = process.env.Secret;
 const bcrypt = require('bcrypt-nodejs');
 
+require('dotenv').config();
+var bingApiKey = process.env.bingApiKey
+
 var path = require('path');
 var bodyParser = require('body-parser');
 

@@ -17,6 +17,7 @@ const Result = require('./results.js')(sequelize, Sequelize);
 const QueryResults = require('./queryResults')(sequelize, Sequelize);
 const User = require('./users.js')(sequelize, Sequelize);
 
+
 // BookmarkUsers join table:
 Result.belongsToMany(Query, {
   through: 'query_results',

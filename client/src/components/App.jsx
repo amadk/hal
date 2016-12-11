@@ -73,6 +73,11 @@ class App extends React.Component {
     return {muiTheme: getMuiTheme()};
   }
 
+
+  getChildContext() {
+    return {muiTheme: getMuiTheme()};
+  }
+
   render() {
     if (this.props.router.location.pathname.indexOf('/signup') >= 0) {
       return (
