@@ -1,5 +1,4 @@
 // This file makes all join table relationships
-
 const Sequelize = require('sequelize');
 
 var db = process.env.db;
@@ -16,6 +15,8 @@ const sequelize = new Sequelize(db, dbUser, dbPassword, {
 const Query = require('./queries.js')(sequelize, Sequelize);
 const Result = require('./results.js')(sequelize, Sequelize);
 const QueryResults = require('./queryResults')(sequelize, Sequelize);
+const User = require('./users.js')(sequelize, Sequelize);
+
 
 // BookmarkUsers join table:
 Result.belongsToMany(Query, {
@@ -36,3 +37,4 @@ sequelize.sync();
 exports.Query = Query;
 exports.Result = Result;
 exports.QueryResults = QueryResults;
+exports.User = User;

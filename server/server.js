@@ -2,7 +2,11 @@ var express = require('express');
 var app = express();
 
 var request = require('request');
-var bodyParse = require('body-parser');
+
+require('dotenv').config();
+var bingApiKey = process.env.bingApiKey;
+var secret = process.env.Secret;
+const bcrypt = require('bcrypt-nodejs');
 
 require('dotenv').config();
 var bingApiKey = process.env.bingApiKey
@@ -12,14 +16,33 @@ var bodyParser = require('body-parser');
 
 var resultController = require('../db/controllers/results.js');
 var queryController = require('../db/controllers/queries.js');
+var userController = require('../db/controllers/users.js');
+
+const session = require('express-session');
 
 app.use(bodyParser.json());
 
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, '/../client/assets/index.html'));
-});
+app.use(session({
+  secret: secret,
+  resave: false,
+  saveUninitialized: true
+}));
 
-app.get('/search', function(req, res) {
+
+const routes = ['/', '/signup', '/signin', '/search'];
+
+for (const route of routes) {
+  app.get(route, userController.checkAuth, (req, res) => {
+    if (route === '/') {
+      console.log('searching')
+      res.redirect('/search');
+    } else {
+      res.sendFile(path.join(__dirname, '/../client/assets/index.html'));
+    }
+  });
+}
+
+app.get('/webSearch', function(req, res) {
   queryController.findOne({where: {query: req.query.q}}, function(query) {
     if (!query) {
       var options = {
@@ -57,7 +80,58 @@ app.get('/search', function(req, res) {
   });
   
   // res.send({webPages: {value: [{displayUrl: 'https://en.wikipedia.org/wiki/Bakuman', snippet: 'Bakuman. (バクマン。?) is a Japanese manga series written by Tsugumi Ohba and illustrated by Takeshi Obata, the same creative team responsible for Death Note.', name: 'Bakuman - Wikipedia'}]}})
-})
+});
+
+/* auth routes -------------------------------------------------------------- */
+app.post('/signin', (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+  const response = {};
+  userController.findOne({where: {email: email}}, user => {
+    if (!user) {
+      response.auth = false;
+      res.send(response);
+    } else {
+      userController.comparePassword(user, password, match => {
+        if (match) {
+          response.auth = true;
+          userController.createSession(req, res, user, response);
+        } else {
+          response.auth = false;
+          res.send(response);
+        }
+      });
+    }
+  });
+});
+
+app.post('/signup', function(req, res) {
+
+  const email = req.body.email;
+  const password = req.body.password;
+  console.log(req.body);
+  userController.findOne({where: {email: email}}, user => {
+    if (!user) {
+      bcrypt.hash(password, null, null, (err, hash) => {
+        req.body.password = hash;
+        userController.create(req.body, user => {
+          userController.createSession(req, res, user, {auth: true});
+        });
+      });
+
+    } else {  //if user exists
+      res.send('User exists');
+    }
+  });
+});
+
+app.get('/signout', (req, res) => {
+  req.session.destroy(() => {
+    res.send('session destroyed');
+  });
+});
+
+/* auth routes end ---------------------------------------------------------- */
 
 app.use(express.static(path.join(__dirname, '../client')));
 
