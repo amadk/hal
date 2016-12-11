@@ -25,7 +25,7 @@ class Search extends React.Component {
     let self = this;
     if (this.state.query !== '') {
       $.get({
-        url: '/search',
+        url: '/webSearch',
         data: {q: this.state.query},
         success: function(data) {
           console.log('Success!', data);
