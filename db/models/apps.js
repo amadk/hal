@@ -1,28 +1,37 @@
 module.exports = function(sequelize, Sequelize) {
 
-  var User = sequelize.define('users', {
+  var App = sequelize.define('apps', {
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       allowNull: false,
       autoIncrement: true
     },
-    firstName: {
+    name: {
       type: Sequelize.STRING
     },
-    lastName: {
-      type: Sequelize.STRING
-    },
-    email: {
-      type: Sequelize.STRING
-    },
-    password: {
-      type: Sequelize.STRING
-    },
-    backgroundImg: {
+    description: {
       type: Sequelize.TEXT
+    },
+    version: {
+      type: Sequelize.STRING
+    },
+    version_name: {
+      type: Sequelize.STRING
+    },
+    platform: {
+      type: Sequelize.STRING
+    },
+    rating: {
+      type: Sequelize.INTEGER
+    },
+    htmlLink: {
+      type: Sequelize.STRING
+    },
+    iconLink: {
+      type: Sequelize.STRING
     }
   });
 
-  return User;
+  return App;
 };

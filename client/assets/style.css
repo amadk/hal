@@ -1,0 +1,130 @@
+body {
+	background-image: url('http://www.planwallpaper.com/static/images/HD-Wallpapers-89.jpg');
+}
+
+#appStoreLink {
+	margin-left: 85%;
+	margin-top: 25px;
+	margin-bottom: 0;
+	display: inline-block;
+}
+
+#appStoreButton {
+	height: 45px;
+	width: 125px;
+	border: none;
+
+	font-family: sans-serif;
+	font-weight: 400;
+	font-size: 17.5px;
+
+	background-color: white;
+	opacity: 0.8;
+	border-radius: 10px;
+	cursor: pointer;
+
+}
+
+#appStoreButton:hover {
+	opacity: 1;
+	color:black;
+}
+
+#searchContainer {
+	margin-left: 50px;
+	margin-top: 20px;
+	display: inline-block;
+}
+
+#searchBox {
+	height: 30px;
+	width: 450px;
+	padding: 4px;
+	padding-bottom:6px;
+	padding-left: 15px;
+
+	opacity: 0.8;
+
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: 20px;
+
+	border-style: none;
+	border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px;
+	display: inline-block;
+
+}
+
+#searchBox:focus {
+	outline: none;
+}
+
+#searchButton {
+	height: 40px;
+	width: 80px;
+	margin-top: -100px;
+
+	opacity: 0.8;
+
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: 15px;
+
+	background-color: white;
+	border-style: none;
+	border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+	display: inline-block;
+
+}
+
+#searchButton:hover {
+	opacity: 1;
+	cursor: pointer;
+}
+
+#searchButton:focus {
+	outline: none;
+	opacity: 1;
+}
+
+#results {
+	margin-left: 40px;
+	margin-top: 50px;
+}
+
+.resultCard {
+	border-radius: 10px;
+	background-color: white;
+	opacity: 0.8;
+	margin: 10px;
+	padding: 15px;
+	width: 60%;
+}
+
+.resultCard:hover {
+	background-color: white;
+	opacity: 1;
+}
+
+.resultTitle {
+	font-family: sans-serif;
+	font-weight: 400;
+	font-size: 20px;
+	background-color: white;
+	opacity: 0.99;
+}
+
+.resultUrl {
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: 13px;
+}
+
+.resultSnippet {
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: 15px;
+	margin-top: 5px;
+}

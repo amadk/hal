@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, withRouter } from 'react-router';
 
 import Search from './Search.jsx';
+import AppStore from './AppStore.jsx';
 import SignIn from './SignIn.jsx';
 import SignUp from './SignUp.jsx';
 import isEmail from 'validator/lib/isEmail';
@@ -99,6 +100,8 @@ class App extends React.Component {
         );
     } else if (this.props.router.location.pathname.indexOf('/search') >= 0) {
         return <Search />
+    } else if (this.props.router.location.pathname.indexOf('/appstore') >= 0) {
+        return <AppStore />
     }
   }
 }
