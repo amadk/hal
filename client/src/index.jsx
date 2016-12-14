@@ -7,14 +7,14 @@ import SignUp from './components/Signup.jsx';
 
 import App from './components/App.jsx';
 import Search from './components/Search.jsx';
-// import Store from './components/Store.jsx';
+import AppStore from './components/AppStore.jsx';
 
 ReactDOM.render((
   <Router history={browserHistory}>
     <Route path="/" component={App} >
       <Route path="signup" component={SignUp} />
       <Route path="signin" component={SignIn} />
-      {/* <Route path="store" component={Store} />*/}
+      <Route path="appstore" component={AppStore} />
       <Route path="search" component={Search} />
     </Route>
   </Router>

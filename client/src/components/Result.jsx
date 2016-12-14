@@ -8,9 +8,10 @@ export default props => {
     link = 'http://' + link;
   }
   return (
-    <Card>
-      <a href={link}><CardTitle title={props.name} subtitle={props.displayUrl}/></a>
-      <CardText>{props.snippet}</CardText>
-    </Card>
+    <div className="resultCard">
+      <div className="resultTitle"><a href={link}>{props.name}</a></div>
+      <div className="resultUrl">{props.displayUrl}</div>
+      <div className="resultSnippet">{props.snippet}</div>
+    </div>
   )
 }

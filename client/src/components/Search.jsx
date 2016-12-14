@@ -29,7 +29,10 @@ class Search extends React.Component {
         data: {q: this.state.query},
         success: function(data) {
           console.log('Success!', data);
-          self.setState({results: data}) 
+          self.setState({results: data.results});
+          data.apps.forEach(function(app) {
+            $('#apps').html(app)
+          });
         },
         error: function(error) {
           console.log(error)
@@ -45,19 +48,27 @@ class Search extends React.Component {
     console.log(this.state.results);
     var style = {
       fontFamily: 'sans-serif'
-    }
+    };
     var results = this.state.results.map((result, index) => {
       return (<Result name={result.name} displayUrl={result.displayUrl} snippet={result.snippet} key={index}/>);
     });
     return (
-      <div className="searchBox">
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
-        <TextField floatingLabelText="Search" type="text" onChange={(event) => {self.setState({query: event.target.value}); console.log(this.state.query)}}/>
-      </MuiThemeProvider>
-      <MuiThemeProvider muiTheme={getMuiTheme()}>
-        <RaisedButton type="submit" buttonStyle={style} label="Search" onClick={this.getSearchResults.bind(this)}/>    
-      </MuiThemeProvider> 
-        {results}
+      <div id="searchPage">
+        <div id="tabBar">
+          <Link to="/appstore" id="appStoreLink">
+            <button id="appStoreButton">App Store</button>
+          </Link>
+
+          <div id="searchContainer">
+            <input id="searchBox" onChange={(event) => {self.setState({query: event.target.value}); console.log(this.state.query)}}/>
+            <button id="searchButton" onClick={this.getSearchResults.bind(this)}>Search</button>    
+          </div>
+        </div>
+
+        <div id="apps"></div>
+        <div id="results">
+          {results}
+        </div>
       </div>
     )
   }
