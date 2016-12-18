@@ -2,8 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Router, Route, browserHistory } from 'react-router';
 
-import SignIn from './components/Signin.jsx';
-import SignUp from './components/Signup.jsx';
+import SignIn from './components/SignIn.jsx';
+import SignUp from './components/SignUp.jsx';
 
 import App from './components/App.jsx';
 import Search from './components/Search.jsx';
