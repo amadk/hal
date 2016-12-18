@@ -32,14 +32,14 @@ Query.belongsToMany(Result, {
 });
 
 // UserApps join table:
-App.belongsToMany(User, {
-  through: 'user_apps',
-  foreignKey: 'app_id'
-});
-
 User.belongsToMany(App, {
   through: 'user_apps',
   foreignKey: 'user_id'
+});
+
+App.belongsToMany(User, {
+  through: 'user_apps',
+  foreignKey: 'app_id'
 });
 
 // Devloper-App relationship:

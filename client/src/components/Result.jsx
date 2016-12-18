@@ -9,7 +9,7 @@ export default props => {
   }
   return (
     <div className="resultCard">
-      <div className="resultTitle"><a href={link}>{props.name}</a></div>
+      <a target="_blank" className="resultTitle" href={link}>{props.name}</a>
       <div className="resultUrl">{props.displayUrl}</div>
       <div className="resultSnippet">{props.snippet}</div>
     </div>

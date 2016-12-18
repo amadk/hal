@@ -1,12 +1,32 @@
+html {
+  height:100%;
+}
+
 body {
-	background-image: url('http://www.planwallpaper.com/static/images/HD-Wallpapers-89.jpg');
+	/*background-image: url('http://www.planwallpaper.com/static/images/HD-Wallpapers-89.jpg');*/
+	background-color: white;
+  margin:0;
+}
+
+
+
+#tabBar {
+	box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+	padding: 15px;
+	position: fixed;
+	width: 100%;
+	background-color: white;
+	z-index: 5;
+}
+
+#resultsBody {
+	height: 100%;
+	overflow: scroll;
 }
 
 #appStoreLink {
-	margin-left: 85%;
-	margin-top: 25px;
-	margin-bottom: 0;
-	display: inline-block;
+	float: right;
+	margin-right: 50px;
 }
 
 #appStoreButton {
@@ -19,40 +39,40 @@ body {
 	font-size: 17.5px;
 
 	background-color: white;
-	opacity: 0.8;
+	opacity: 0.5;
 	border-radius: 10px;
 	cursor: pointer;
 
 }
 
 #appStoreButton:hover {
-	opacity: 1;
-	color:black;
+	opacity: 0.8;
 }
 
 #searchContainer {
-	margin-left: 50px;
-	margin-top: 20px;
-	display: inline-block;
+	margin-left: 40px;
+	float: left;
+	border-radius: 10px;
+	border: 1px solid gray;
 }
 
 #searchBox {
 	height: 30px;
 	width: 450px;
-	padding: 4px;
-	padding-bottom:6px;
+	padding: 3px;
+	padding-bottom:7px;
 	padding-left: 15px;
-
-	opacity: 0.8;
 
 	font-family: sans-serif;
 	font-weight: 300;
 	font-size: 20px;
 
+	background-color: white;
+	opacity: 0.5;
+
 	border-style: none;
 	border-top-left-radius: 10px;
 	border-bottom-left-radius: 10px;
-	display: inline-block;
 
 }
 
@@ -63,63 +83,66 @@ body {
 #searchButton {
 	height: 40px;
 	width: 80px;
-	margin-top: -100px;
-
-	opacity: 0.8;
 
 	font-family: sans-serif;
 	font-weight: 300;
 	font-size: 15px;
 
 	background-color: white;
+	opacity: 0.5;
+
 	border-style: none;
 	border-top-right-radius: 10px;
 	border-bottom-right-radius: 10px;
-	display: inline-block;
 
 }
 
 #searchButton:hover {
-	opacity: 1;
+	opacity: 0.8;
 	cursor: pointer;
 }
 
 #searchButton:focus {
 	outline: none;
-	opacity: 1;
+	opacity: 0.8;
 }
 
-#results {
+#searchResults {
 	margin-left: 40px;
-	margin-top: 50px;
+	max-height: 100%;
+	overflow: scroll;
+}
+
+#apps {
+	margin-top: 100px;
 }
 
 .resultCard {
 	border-radius: 10px;
-	background-color: white;
-	opacity: 0.8;
 	margin: 10px;
 	padding: 15px;
 	width: 60%;
+	text-decoration: none;
+	-webkit-backdrop-filter: blur(50px);
 }
 
-.resultCard:hover {
+/*.resultCard:hover {
 	background-color: white;
 	opacity: 1;
-}
+}*/
 
 .resultTitle {
+	text-decoration: none;
 	font-family: sans-serif;
 	font-weight: 400;
 	font-size: 20px;
-	background-color: white;
-	opacity: 0.99;
 }
 
 .resultUrl {
 	font-family: sans-serif;
 	font-weight: 300;
 	font-size: 13px;
+	color: green;
 }
 
 .resultSnippet {

@@ -21,6 +21,7 @@ var extract = require('extract-zip');
 var resultController = require('../db/controllers/results.js');
 var queryController = require('../db/controllers/queries.js');
 var userController = require('../db/controllers/users.js');
+var appController = require('../db/controllers/apps.js');
 
 const session = require('express-session');
 const utils = require('./lib/utilities.js');
@@ -48,7 +49,11 @@ for (const route of routes) {
   });
 }
 
+
+/* web search start ---------------------------------------------------------- */
+
 app.get('/webSearch', function(req, res) {
+  console.log(fs.unlink)
   queryController.findOne({where: {query: req.query.q}}, function(query) {
     if (!query) {
       var options = {
@@ -60,7 +65,9 @@ app.get('/webSearch', function(req, res) {
       request(options, function(err, response, body) {
         var results = JSON.parse(body).webPages.value;
         queryController.create({query: req.query.q}, function(query) {
+
           var addResults = function (resultIndex) {
+
             if (resultIndex === results.length) {
               query.getResults().then(function(results) {
                 request('https://s3.amazonaws.com/isearchstore/calculator/calculator.html', function(err, response, body) {
@@ -69,6 +76,7 @@ app.get('/webSearch', function(req, res) {
                 });
               });
             }
+
             resultController.create({
               name: results[resultIndex].name,
               displayUrl: results[resultIndex].displayUrl,
@@ -79,20 +87,42 @@ app.get('/webSearch', function(req, res) {
               })
             })
           }
+
           addResults(0);
         });
       });
     } else {
       query.getResults().then(function(results) {
-        request('https://s3.amazonaws.com/isearchstore/calculator/calculator.html', function(err, response, body) {
-          res.send({results: results, apps: [body]});
+        var appsArr = [];
+
+        appController.findAll({where: {name: req.query.q}}, function(apps) {
+          console.log('Finding apps: ', apps);
+
+          var appGetter = function(appIndex) {
+            if (appIndex === apps.length) {
+              res.send({results: results, apps: appsArr});
+              return;
+            }
+            request(apps[appIndex].get('htmlLink'), function(err, response, body) {
+              appsArr.push(body);
+              appGetter(appIndex+1);
+            });
+          }
+
+          if (apps.length > 0) {
+            console.log('Apps found!')
+            appGetter(0)
+          } else {
+            console.log('No apps found')
+            res.send({results: results, apps: appsArr});
+          }
+
         });
       });
     }
   });
-  
-  // res.send({webPages: {value: [{displayUrl: 'https://en.wikipedia.org/wiki/Bakuman', snippet: 'Bakuman. (バクマン。?) is a Japanese manga series written by Tsugumi Ohba and illustrated by Takeshi Obata, the same creative team responsible for Death Note.', name: 'Bakuman - Wikipedia'}]}})
 });
+/* web search end ---------------------------------------------------------- */
 
 /* s3 upload start ---------------------------------------------------------- */
 /** AWS CONFIG **/
@@ -102,107 +132,112 @@ AWS.config.update({
   secretAccessKey: AWSsecretKey
 });
 const s3Bucket = new AWS.S3( { params: {Bucket: 'isearchstore'} } );
+var uploadCount = 0;
 
 /** AWS UPLOAD **/
 app.post('/upload', (req, res) => {
+
+  if(req.body.fileName.split('.')[1] !== 'zip') {
+    res.send('Error, not a zip file!');
+    return;
+  }
+
   const fileBuffer = utils.decodeBase64Image(req.body.filePath);
+
   console.log(fileBuffer.data)
   console.log(req.body.fileName);
 
-  fs.writeFile('./server/tmpApp/'+req.body.fileName, fileBuffer.data, (err) => {
-    if (err) throw err;
-    console.log('It\'s saved!');
-    extract('./server/tmpApp/'+req.body.fileName, {dir: './server/tmpApp/'}, function (err) {
-      // extraction is complete. make sure to handle the err 
-      var folder = req.body.fileName.split('.')[0];
-      
-      var scriptTag = '<script src=\"https://s3.amazonaws.com/isearchstore/'+folder+'/'+folder+'.js\"></script>'
-      var cssTag = '<link rel=\"stylesheet\" type=\"text/css\" href=\"https://s3.amazonaws.com/isearchstore/'+folder+'/'+folder+'.css\" />'
-      
-      fs.appendFileSync('./server/tmpApp/'+folder+'/'+folder+'.html', scriptTag+cssTag)
-      
-      fs.readFile('./server/tmpApp/'+folder+'/'+folder+'.html', (err, htmldata) => {
-        if (err) throw err;
-        console.log('reading html data!', htmldata);
-        const awsData = {
-          Bucket: 'isearchstore',
-          Key: folder+'/'+folder+'.html',
-          Body: htmldata
-        };
-        s3Bucket.putObject(awsData, (err, s3data) => {
-          if (err) {
-            console.log('Error uploading data: ', s3data, err);
-          } else {
-            console.log('succesfully uploaded the html for App!', s3data);
+  uploadCount++;
+  var tmpDir = './server/tmpApps/'+req.body.fileName.split('.')[0]+uploadCount+'/';
+  
+  //Create temporary directory
+  fs.mkdir(tmpDir, function(err) {
+    console.log('Created temporary directory!')
+    // Write out zip file into temporary path
+    fs.writeFile(tmpDir+req.body.fileName, fileBuffer.data, (err) => {
+      if (err) {
+        console.log('Error in writing zip file:' , err)
+      }
+      console.log('Completed writting zip file to temporary directory!');
 
-            fs.readFile('./server/tmpApp/'+folder+'/'+folder+'.js', (err, jsdata) => {
-              if (err) throw err;
-              console.log('reading js data!', jsdata);
-              const awsData = {
-                Bucket: 'isearchstore',
-                Key: folder+'/'+folder+'.js',
-                Body: jsdata
-              };
-              s3Bucket.putObject(awsData, (err, s32data) => {
-                if (err) {
-                  console.log('Error uploading data: ', s32data, err);
-                } else {
-                  console.log('succesfully uploaded the js for App!', s32data);
-                  
-                  fs.readFile('./server/tmpApp/'+folder+'/'+folder+'.css', (err, cssdata) => {
-                    if (err) throw err;
-                    console.log('reading js data!', jsdata);
-                    const awsData = {
-                      Bucket: 'isearchstore',
-                      Key: folder+'/'+folder+'.css',
-                      Body: cssdata,
-                      ContentType: 'text/css'
-                    };
-                    s3Bucket.putObject(awsData, (err, s33data) => {
-                      if (err) {
-                        console.log('Error uploading data: ', s33data, err);
-                      } else {
-                        console.log('succesfully uploaded the js for App!', s33data);
-                        fs.rmdir('./server/tmpApp/'+folder, function() {
-                          fs.unlink('./server/tmpApp/'+folder+'/'+folder+'.zip', function() {
-                            console.log('removed files and folders!')
-                            res.send('Uploaded!');
-                          })
-                        })
-                      }
-                    });
-                  });
-                }
-              });
-            });
+      // Extract zip file inside temporary directory
+      extract(tmpDir+req.body.fileName, {dir: tmpDir}, function (err) {
+        if (err) {
+          console.log('Error in zip file extraction:', err)
+        }
+        console.log('Extracted zip file!');
+
+        var extractedFolder = req.body.fileName.split('.')[0]+'/';
+
+        // Read file names inside tmpDir/extractedFolder
+        fs.readdir(tmpDir+extractedFolder, function(err, files) {
+          console.log('Read temporary directory and obtained all file names!');
+
+          var jsFile, htmlFile, cssFile, pngFile, manifestJSON, htmlIndex;
+          files.forEach(function(file, index) {
+            if (file.split('.')[1] === 'js') {
+              jsFile = file;
+            } else if (file.split('.')[1] === 'html') {
+              htmlFile = file;
+              htmlIndex = index
+            } else if (file.split('.')[1] === 'css') {
+              cssFile = file;
+            } else if (file.split('.')[1] === 'png') {
+              pngFile = file;
+            } else if (file.split('.')[1] === 'json') {
+              manifestJSON = file;
+            }
+          });
+
+          // Html file is moved to the end of the array
+          files.push(files.splice(htmlIndex, 1)[0]);
+
+          if (!manifestJSON) {
+            res.send('Error, no manifest.json file');
+            return;
           }
+
+          // Read manifest.json file
+          fs.readFile(tmpDir+extractedFolder+manifestJSON, 'utf8', function(err, fileData) {
+            if (err) throw err;
+
+            // Parse the json data into a variable
+            var jsonData = JSON.parse(fileData);
+            console.log('Read and parsed Manifest file')
+            // Check if the app already exists
+            appController.findOne({where: {name: jsonData.name}}, function (app) {
+              if (app) {  // If the app exists then send back an error to the client
+                res.send('App with that name already exists');
+                return;
+              } else {  //else if new app is being uploaded ->
+                // Upload app files to AWS S3
+                appController.uploadFiles(fs, s3Bucket, tmpDir, extractedFolder, jsonData, files, 0, function(updatedJSON) {
+                  console.log('Uploaded all files to AWS!');
+                  // Get current user
+                  userController.findOne({where: {email: req.session.email}}, function(user) {
+                    // Save Manifest file data to database
+                    user.createApp(updatedJSON).then(function(app) {
+                      console.log('Saved app data!')
+                      // Remove all files and folders
+                      appController.removeFiles(fs, tmpDir, extractedFolder, req.body.fileName, files, 0, function() {
+                        console.log('Remoed all files and sent response!')
+                        //Decrement upload counter
+                        uploadCount--;
+                        // Send response
+                        res.send('Uploaded all files and saved all data!');
+                      })
+                    })
+                  })
+                })                  
+              }
+            });
+          });
         });
-
       });
-    })
+    });
   });
-  var date = new Date().getTime(); // fecha.format(new Date(), 'mediumDate').replace(/\s+/g, '');
-  let file = req.body.fileName.split('.');
-  let imgType = file[1];
-  // console.log(req.body.fileName);
-  let imgName = file[0] + date;
+});
 
-
-  const data = {
-    Bucket: 'isearchstore',
-    Key: imgName + '.' + imgType,
-    Body: fileBuffer.data,
-  };
-
-  let imgLink = 'https://s3.amazonaws.com/' + data.Bucket + '/' + imgName + '.' + imgType;
-
-  // s3Bucket.putObject(data, (err, data) => {
-  //   if (err) {
-  //     console.log('Error uploading data: ', data, err);
-  //   } else {
-  //     console.log('succesfully uploaded the image!');
-  //   }
-  // });
 
   // userController.findOne({where: {email: req.session.email}}, user => {
   //   photoController.create({
@@ -216,7 +251,6 @@ app.post('/upload', (req, res) => {
   //     res.status(200).send(data);
   //   });
   // });
-});
 /* s3 upload end ---------------------------------------------------------- */
 
 /* auth routes -------------------------------------------------------------- */
