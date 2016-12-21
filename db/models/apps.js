@@ -19,7 +19,7 @@ module.exports = function(sequelize, Sequelize) {
     version_name: {
       type: Sequelize.STRING
     },
-    platform: {
+    type: {
       type: Sequelize.STRING
     },
     rating: {

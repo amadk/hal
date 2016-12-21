@@ -7,6 +7,8 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import AppInfo from './AppInfo.jsx'
+
 
 let fileName = '';
 let filePath = '';
@@ -17,8 +19,21 @@ class AppStore extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-
+      apps: []
     }
+  }
+
+  componentDidMount () {
+    $.get({
+      url: '/apps',
+      success: data => {
+        console.log('success!', data);
+        this.setState({apps: data});
+      },
+      error: error => {
+        console.error('error in get upload', error);
+      }
+    });
   }
 
   uploadFile () {
@@ -42,7 +57,7 @@ class AppStore extends React.Component {
           error: error => {
             console.error('error in get upload', error);
             $('.error').show();
-          },
+          }
         });
       }
     };
@@ -81,25 +96,26 @@ class AppStore extends React.Component {
         opacity: 0,
       }
     };
+    var apps = this.state.apps.map(function(app) {
+      return (<AppInfo 
+        iconLink={app.iconLink}
+        name={app.name} 
+        version={app.version}
+        description={app.description} />)
+    });
     return (
       <div>
-        <div>AppStore!!!</div>
-
-        <div className="centerButtons">
-          <MuiThemeProvider muiTheme={getMuiTheme()}>
-            <RaisedButton
-            label="Upload"
-            labelPosition="before"
-            style={styles.button}
-            containerElement="label">
-              <input id="fileUp" type="file" style={styles.exampleImageInput} />
-            </RaisedButton>
-          </MuiThemeProvider>
+        <div id="appStoreTab">
+          <div id="appStoreTitle">App Store</div>
+          <label id="uploadButton"><input type="file" id="fileUp" />Upload</label>
+          <Link to="/search" id="webSearchLink">
+            <button id="webSearchLinkButton">Search</button>
+          </Link>
         </div>
-        
-        <MuiThemeProvider muiTheme={getMuiTheme()}>
-          <Link to="/search"><RaisedButton type="button" label="Web Search"/></Link>
-        </MuiThemeProvider>
+
+        <div id="appStoreApps">
+        {apps}
+        </div>
       </div>
     )
   }

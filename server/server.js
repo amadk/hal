@@ -53,7 +53,6 @@ for (const route of routes) {
 /* web search start ---------------------------------------------------------- */
 
 app.get('/webSearch', function(req, res) {
-  console.log(fs.unlink)
   queryController.findOne({where: {query: req.query.q}}, function(query) {
     if (!query) {
       var options = {
@@ -70,9 +69,8 @@ app.get('/webSearch', function(req, res) {
 
             if (resultIndex === results.length) {
               query.getResults().then(function(results) {
-                request('https://s3.amazonaws.com/isearchstore/calculator/calculator.html', function(err, response, body) {
-                  res.send({results: results, apps: [body]});
-                  return;
+                appController.findAll({where: {name: req.query.q}}, function(apps) {
+                  res.send({results: results, apps: apps});
                 });
               });
             }
@@ -93,30 +91,8 @@ app.get('/webSearch', function(req, res) {
       });
     } else {
       query.getResults().then(function(results) {
-        var appsArr = [];
-
         appController.findAll({where: {name: req.query.q}}, function(apps) {
-          console.log('Finding apps: ', apps);
-
-          var appGetter = function(appIndex) {
-            if (appIndex === apps.length) {
-              res.send({results: results, apps: appsArr});
-              return;
-            }
-            request(apps[appIndex].get('htmlLink'), function(err, response, body) {
-              appsArr.push(body);
-              appGetter(appIndex+1);
-            });
-          }
-
-          if (apps.length > 0) {
-            console.log('Apps found!')
-            appGetter(0)
-          } else {
-            console.log('No apps found')
-            res.send({results: results, apps: appsArr});
-          }
-
+          res.send({results: results, apps: apps});
         });
       });
     }
@@ -220,7 +196,7 @@ app.post('/upload', (req, res) => {
                       console.log('Saved app data!')
                       // Remove all files and folders
                       appController.removeFiles(fs, tmpDir, extractedFolder, req.body.fileName, files, 0, function() {
-                        console.log('Remoed all files and sent response!')
+                        console.log('Removed all files and sent response!')
                         //Decrement upload counter
                         uploadCount--;
                         // Send response
@@ -301,6 +277,17 @@ app.get('/signout', (req, res) => {
   });
 });
 
+/* auth routes end ---------------------------------------------------------- */
+
+/* auth routes end ---------------------------------------------------------- */
+
+app.get('/apps', function(req, res) {
+  console.log('recieved!')
+  appController.findAll({where: {}}, apps => {
+    console.log(apps)
+    res.send(apps);
+  })
+})
 /* auth routes end ---------------------------------------------------------- */
 
 app.use(express.static(path.join(__dirname, '../client')));

@@ -35,7 +35,6 @@ var uploadFiles = function (fs, s3Bucket, tmpDir, extractedFolder, jsonData, fil
 
   var fileName = files[fileIndex];
   var fileExt = fileName.split('.')[1];
-  var contentType = 'text/plain'
 
   if(fileExt === 'json' || fileExt === 'DS_Store') {
 
@@ -44,6 +43,9 @@ var uploadFiles = function (fs, s3Bucket, tmpDir, extractedFolder, jsonData, fil
   } else {
     if (fileExt === 'html') {
       var tags = '';
+      if (jsonData.type === 'link extension') {
+        tags += '<script>var results = window.location.search.split(\'=\')[1]</script>'
+      }
       if (jsonData.jsLink) {
         tags += '<script src=\"'+jsonData.jsLink+'\"></script>';
       }
@@ -55,8 +57,15 @@ var uploadFiles = function (fs, s3Bucket, tmpDir, extractedFolder, jsonData, fil
     }
     fs.readFile(tmpDir+extractedFolder+fileName, (err, fileData) => {
       if (err) throw err;
-      if(fileExt === 'css') {
-        contentType = 'text/css';
+      var contentType = '';
+      if(fileExt === 'css' || fileExt === 'html') {
+        contentType = 'text/'+fileExt;
+      }
+      if (fileExt === 'js') {
+        contentType = 'application/javascript';
+      }
+      if (fileExt === 'png') {
+        contentType = 'image/png';
       }
       const awsData = {
         Bucket: 'isearchstore',
@@ -71,16 +80,16 @@ var uploadFiles = function (fs, s3Bucket, tmpDir, extractedFolder, jsonData, fil
         } else {
           console.log('************Looking for urlssss!!!', s3data)
           if (fileExt === 'png') {
-            jsonData.iconLink = s3data.Location;
+            jsonData.iconLink = 'https://s3.amazonaws.com/'+s3data.Bucket+'/'+s3data.Key;
           }
           if (fileExt === 'js') {
-            jsonData.jsLink = s3data.Location;
+            jsonData.jsLink = 'https://s3.amazonaws.com/'+s3data.Bucket+'/'+s3data.Key;
           }
           if (fileExt === 'css') {
-            jsonData.cssLink = s3data.Location;
+            jsonData.cssLink = 'https://s3.amazonaws.com/'+s3data.Bucket+'/'+s3data.Key;
           }
           if (fileExt === 'html') {
-            jsonData.htmlLink = s3data.Location;
+            jsonData.htmlLink = 'https://s3.amazonaws.com/'+s3data.Bucket+'/'+s3data.Key;
           }
 
           console.log('succesfully uploaded '+fileName);
@@ -102,8 +111,6 @@ var removeFiles = function(fs, tmpDir, extractedFolder, zipFile, files, fileInde
     })
     return;
   }
-  console.log(fs);
-  console.log(fs.unlink);
   fs.unlink(tmpDir+extractedFolder+files[fileIndex], function() {
     removeFiles(fs, tmpDir, extractedFolder, zipFile, files, fileIndex+1, callback)
   })
