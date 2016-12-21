@@ -4,6 +4,7 @@ import $ from 'jquery';
 
 import Results from './Results.jsx';
 import Result from './Result.jsx';
+import SearchApp from './SearchApp.jsx';
 import 'materialize-css';
 
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -17,24 +18,27 @@ class Search extends React.Component {
     super(props);
     this.state = {
       query: '',
-      searchResults: [],
-      resultsHtml: ''
+      apps: [],
+      searchResults: []
     }
-    var self = this;
+  }
 
-    this.changeResultsHtml = function(val) {
-      self.setState({resultsHtml: val});
-      console.log('changed results html!', val);
-    }
-
-    changeResultsHtml = this.changeResultsHtml;
-    console.log(changeResultsHtml);
+  componentDidMount () {
+    $.get({
+      url: '/apps',
+      success: data => {
+        console.log('success!', data)
+        this.setState({apps: data})
+      },
+      error: error => {
+        console.error('error in get upload', error);
+      }
+    });
   }
 
 
-  getSearchResults () {
-
-    this.changeResultsHtml('');
+  getSearchResults (e) {
+    e.preventDefault()
     let self = this;
 
     if (this.state.query !== '') {
@@ -45,15 +49,10 @@ class Search extends React.Component {
 
           console.log('Success!', data);
 
-          results = data.results;
-
-          $('#apps').html('')
-
-          data.apps.forEach(function(app) {
-            $('#apps').append(app);
+          self.setState({
+            apps: data.apps,
+            searchResults: data.results
           });
-
-          self.setState({searchResults: data.results});
         },
         error: function(error) {
           console.log(error)
@@ -67,15 +66,14 @@ class Search extends React.Component {
   render() {
 
     let self = this;
-    var searchResults;
 
-    if (this.state.resultsHtml === '') {
-      searchResults = this.state.searchResults.map((result, index) => {
-        return (<Result name={result.name} displayUrl={result.displayUrl} snippet={result.snippet} key={index}/>);
-      });
-    } else {
-      $('#searchResults').html(this.state.resultsHtml);
-    }
+    var apps = this.state.apps.map((app, index) => {
+      return <SearchApp htmlLink={app.htmlLink} key={index}/>;
+    });
+
+    var searchResults = this.state.searchResults.map((result, index) => {
+      return (<Result name={result.name} displayUrl={result.displayUrl} snippet={result.snippet} key={index}/>);
+    });
 
     return (
       <div id="searchPage">
@@ -84,15 +82,25 @@ class Search extends React.Component {
             <button id="appStoreButton">App Store</button>
           </Link>
 
-          <div id="searchContainer">
-            <input id="searchBox" onChange={(event) => {self.setState({query: event.target.value}); console.log(this.state.query)}}/>
-            <button id="searchButton" onClick={this.getSearchResults.bind(this)}>Search</button>    
-          </div>
+          <form id="searchContainer" onSubmit={this.getSearchResults.bind(this)}>
+            <input 
+              id="searchBox"
+              onChange={
+                (event) => {
+                  self.setState({
+                    query: event.target.value
+                  });
+                  console.log(this.state.query)
+                }
+              } />
 
-          <div style={{clear:'both'}}></div> 
+          </form>
+
+          <div style={{clear:'both'}}></div>
         </div>
         <div id="resultsBody">
-          <div id="apps"></div>
+
+          <div id="apps">{apps}</div>
           <div id="searchResults">
             {searchResults}
           </div>

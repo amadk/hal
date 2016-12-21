@@ -8,20 +8,20 @@ body {
   margin:0;
 }
 
-
+iframe {
+	margin-top: 100px;
+	height: 350px;
+	width: 500px;
+	border-style: none;
+}
 
 #tabBar {
 	box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
 	padding: 15px;
-	position: fixed;
+	overflow: hidden;
 	width: 100%;
 	background-color: white;
 	z-index: 5;
-}
-
-#resultsBody {
-	height: 100%;
-	overflow: scroll;
 }
 
 #appStoreLink {
@@ -31,36 +31,37 @@ body {
 
 #appStoreButton {
 	height: 45px;
-	width: 125px;
 	border: none;
+	padding: 0 10px;
 
 	font-family: sans-serif;
 	font-weight: 400;
 	font-size: 17.5px;
 
 	background-color: white;
-	opacity: 0.5;
-	border-radius: 10px;
+
+	border-radius: 20px;
+	border: 1px solid #4286f4;
 	cursor: pointer;
 
 }
 
-#appStoreButton:hover {
+/*#appStoreButton:hover {
 	opacity: 0.8;
-}
+}*/
 
 #searchContainer {
-	margin-left: 40px;
+	/*margin-left: 40px;
 	float: left;
-	border-radius: 10px;
-	border: 1px solid gray;
+	border-radius: 20px;
+	border: 1px solid #4286f4;*/
 }
 
 #searchBox {
 	height: 30px;
-	width: 450px;
-	padding: 3px;
-	padding-bottom:7px;
+	width: 40%;
+	margin-top: 2.5px;
+	margin-left: 5%;
 	padding-left: 15px;
 
 	font-family: sans-serif;
@@ -68,11 +69,13 @@ body {
 	font-size: 20px;
 
 	background-color: white;
-	opacity: 0.5;
+	opacity: 1;
 
 	border-style: none;
-	border-top-left-radius: 10px;
-	border-bottom-left-radius: 10px;
+	/*border-top-left-radius: 20px;
+	border-bottom-left-radius: 20px;*/
+	border-radius: 20px;
+	border: 1px solid #4286f4;
 
 }
 
@@ -82,8 +85,8 @@ body {
 
 #searchButton {
 	height: 40px;
-	width: 80px;
-
+	padding: 10px;
+	display: inline-block;
 	font-family: sans-serif;
 	font-weight: 300;
 	font-size: 15px;
@@ -92,9 +95,9 @@ body {
 	opacity: 0.5;
 
 	border-style: none;
-	border-top-right-radius: 10px;
-	border-bottom-right-radius: 10px;
-
+	border-top-right-radius: 20px;
+	border-bottom-right-radius: 20px;
+	border: 1px solid #4286f4;
 }
 
 #searchButton:hover {
@@ -107,21 +110,30 @@ body {
 	opacity: 0.8;
 }
 
-#searchResults {
-	margin-left: 40px;
-	max-height: 100%;
+#resultsBody {
+	height: 100%;
 	overflow: scroll;
 }
 
 #apps {
-	margin-top: 100px;
+	margin-top: 0;
+}
+
+#miniApp {
+	width: 30%;
+	margin-top: 0;
+}
+
+#searchResults {
+	margin-left: 20px;
+	overflow: scroll;
 }
 
 .resultCard {
 	border-radius: 10px;
 	margin: 10px;
+	max-width: 700px;
 	padding: 15px;
-	width: 60%;
 	text-decoration: none;
 	-webkit-backdrop-filter: blur(50px);
 }
@@ -141,7 +153,7 @@ body {
 .resultUrl {
 	font-family: sans-serif;
 	font-weight: 300;
-	font-size: 13px;
+	font-size: 15px;
 	color: green;
 }
 
@@ -151,3 +163,136 @@ body {
 	font-size: 15px;
 	margin-top: 5px;
 }
+
+/* App Store CSS --------------------------> */
+
+#appStoreTab {
+	box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+	padding: 15px;
+	width: 100%;
+	background-color: white;
+	z-index: 5;
+	overflow: hidden;
+}
+
+#appStoreTitle {
+	float: left;
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: 30px;
+
+	margin-left: 20px;
+	margin-top: 5px;
+}
+
+#uploadButton {
+	height: 45px;
+	width: 90px;
+	float: right;
+
+	font-family: sans-serif;
+	font-weight: 400;
+	font-size: 17.5px;
+
+	text-align: center;
+  line-height: 45px;
+
+	margin-right: 50px;
+	margin-left: 10px; 
+	border-radius: 20px;
+	border: 1px solid #4286f4;
+
+}
+
+#fileUp {
+	position: absolute;
+  filter: alpha(opacity=0);
+  opacity: 0;
+  z-index: -1;
+  height: 100%;
+  width: 100%;
+}
+
+#uploadButton:hover, #fileUp:hover {
+	cursor: pointer;
+}
+
+#webSearchLink {
+	float: right;
+	border-radius: 20px;
+	border: 1px solid #4286f4;
+}
+
+#webSearchLinkButton {
+	height: 45px;
+	width: 90px;
+	border: none;
+
+	font-family: sans-serif;
+	font-weight: 400;
+	font-size: 17.5px;
+
+	background-color: white;
+	border-radius: 10px;
+	cursor: pointer;
+	border-radius: 20px;
+
+}
+
+#appStoreApps {
+	margin: 20px;
+	/*border: 1px solid gray;*/
+}
+
+.appBox {
+	margin: 20px;
+	display: inline-block;
+	padding: 20px;
+}
+
+.appIcon {
+	height: 100px;
+	width: 100px;
+}
+
+.appIconData {
+	width: 100px;
+}
+
+.appName {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	text-align: center;
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: 20px;
+}
+
+.appVersion {
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: 15px;
+}
+
+.appDescription {
+	font-family: sans-serif;
+	font-weight: 300;
+	font-size: 15px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
