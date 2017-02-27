@@ -1,4 +1,4 @@
-module.exports.decodeBase64Image = function(dataString) {
+module.exports.decodeBase64File = function(dataString) {
   const matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
   const response = {};
 
