@@ -22,7 +22,7 @@ const styles = {
     display: 'inline-block',
     position: 'absolute',
     height: '100px',
-    width: 'calc(100vw - 130px)'
+    width: 'calc(100% - 130px)'
   },
   appName: {
     fontWeight: 400,
@@ -36,14 +36,15 @@ const styles = {
   },
   installButton: {
     position: 'absolute',
-    bottom: 0,
     right: 0,
+    bottom: 0,
 
     borderRadius: '5px',
     padding: '5px 10px',
     fontSize: '13px',
     color: '#2196F3',
-    border: '1px solid #2196F3'
+    border: '1px solid #2196F3',
+    cursor: 'pointer'
   },
   appDescriptionTitle: {
     fontSize: '16px',
