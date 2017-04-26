@@ -1,122 +1,130 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
-import $ from 'jquery';
 
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
 import AppInfo from './AppInfo.jsx'
 
+const apps = [
+  {
+    name: 'Twitter feed',
+    developer: 'Moonshot Labs Inc.',
+    description: 'Get the tweet your looking!',
+    iconLink: 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Twitter_bird_logo_2012.svg/1259px-Twitter_bird_logo_2012.svg.png'
+  },
+  {
+    name: 'Sound Cloud Player',
+    developer: 'Moonshot Labs Inc.',
+    description: 'Play the song you were looking for instantly!',
+    iconLink: 'https://cdn2.iconfinder.com/data/icons/minimalism/512/soundcloud.png'
+  },
+  {
+    name: 'YouTube Player',
+    developer: 'Moonshot Labs Inc.',
+    description: 'Play the video you were looking for instantly!',
+    iconLink: 'https://www.aikido-almere.nl/img/youtube-256.png'
+  },
+  {
+    name: 'Wikipedia Data',
+    developer: 'Moonshot Labs Inc.',
+    description: 'Get the information your looking for instantly!',
+    iconLink: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/Wikipedia_Logo_1.0.png/220px-Wikipedia_Logo_1.0.png',
+  },
+  {
+    name: 'Latest Apple Products',
+    developer: 'Moonshot Labs Inc.',
+    description: 'See the latest apple products or get the price of the apple product your looking for',
+    iconLink: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/1200px-Apple_logo_black.svg.png'
+  },
+  {
+    name: 'Facebook feed',
+    developer: 'Moonshot Labs Inc.',
+    description: 'Get the facebook post your looking for!',
+    iconLink: 'https://facebookbrand.com/wp-content/themes/fb-branding/prj-fb-branding/assets/images/fb-art.png'
+  }
+]
 
-let fileName = '';
-let filePath = '';
-let fileDescrip = '';
-let currentFiles = [];
+const styles = {
+  textField: {
+    width: '90%',
+    margin: '10px 5%'
+  },
+  appList: {
+    // margin: '10px 0px',
+    // // border: '1px solid black',
+    // width: '100%',
+    // height: '100%'
+  },
+  app: {
+    margin: '10px 25px',
+    float: 'left',
+    width: '100px',
+    height: '100px',
+  },
+  appIcon: {
+    height: '70px',
+    width: '70px',
+    margin: '0 auto',
+    display: 'block'
+  },
+  appName: {
+    fontSize: '13px',
+    fontFamily: 'sans-serif',
+    fontWeight: 300,
+    margin: '5px auto',
+    width: '100px',
+    textAlign: 'center',
+
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap'
+  }
+}
 
 class AppStore extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      apps: []
+      textInput: '',
+      apps: apps
     }
   }
 
   componentDidMount () {
-    $.get({
-      url: '/apps',
-      success: data => {
-        console.log('success!', data);
-        this.setState({apps: data});
-      },
-      error: error => {
-        console.error('error in get upload', error);
-      }
-    });
+    // $.get({
+    //   url: '/apps',
+    //   success: data => {
+    //     console.log('success!', data);
+    //     this.setState({apps: data});
+    //   },
+    //   error: error => {
+    //     console.error('error in get upload', error);
+    //   }
+    // });
   }
 
-  uploadFile () {
-  $(function () {
-    const fileIsLoaded = e => {
-      filePath = e.target.result;
-      console.log(filePath);
-      if (!currentFiles.includes(fileName)) {
-        currentFiles.push(fileName);
-        $.post({
-          url: '/upload',
-          data: JSON.stringify({
-            fileName: fileName,
-            filePath: filePath,
-            description: fileDescrip
-          }),
-          contentType: 'application/json',
-          success: data => {
-            console.log('Found user\'s uploaded photo from DB', data);
-          },
-          error: error => {
-            console.error('error in get upload', error);
-            $('.error').show();
-          }
-        });
-      }
-    };
-
-    $('#fileUp').change(function () {
-      console.log('file ATTEMPT');
-      if (this.files && this.files[0]) {
-        const reader = new FileReader();
-        fileDescrip = $('#description').val();
-        fileName = this.files[0].name;
-        console.log(fileName);
-        reader.onload = fileIsLoaded;
-        reader.readAsDataURL(this.files[0]);
-      }
-    });
-  });
-};
+  handleChange (e) {
+    this.setState({
+      textInput: e.target.value
+    })
+  }
 
   render() {
-    this.uploadFile()
-    const styles = {
-      button: {
-        margin: 12,
-        fontFamily: 'Orbitron !important',
-        backgroundColor: '#e8e8e8',
-        color: 'black !important'
-      },
-      exampleImageInput: {
-        cursor: 'pointer',
-        position: 'absolute',
-        top: 0,
-        bottom: 0,
-        right: 0,
-        left: 0,
-        width: '100%',
-        opacity: 0,
-      }
-    };
-    var apps = this.state.apps.map(function(app, index) {
-      return (<AppInfo 
-        iconLink={app.iconLink}
-        name={app.name} 
-        version={app.version}
-        description={app.description}
-        key={index} />)
-    });
+
     return (
       <div>
-        <form id="commandContainer" onSubmit={(e) => {}}>
-          <TextField
-            id="commandBox"
-            fullWidth={true}
-            floatingLabelText="Search App Store"
-            onChange={(event) => {}}
-            style={{width: '95%'}} />
+        <form id="commandContainer">
+          <TextField onChange={this.handleChange.bind(this)} hintText="Search the store" style={styles.textField} underlineFocusStyle={{borderColor: '#2196F3'}} />
         </form>
 
-        <div id="appStoreApps">
-        {apps}
+        <div style={styles.appList}>
+          {this.state.apps.map((app, index) => (
+            <div style={styles.app} key={index} onClick={()=>{this.props.modalOpen(<AppInfo iconLink={app.iconLink} name={app.name} developer={app.developer} description={app.description} />)}}>
+              <img src={app.iconLink} style={styles.appIcon} />
+              <div style={styles.appName}>{app.name}</div>
+            </div>
+          ))}
         </div>
       </div>
     )

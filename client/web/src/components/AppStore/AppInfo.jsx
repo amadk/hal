@@ -5,43 +5,77 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 
+const styles = {
+  appData: {
+    height: '120px',
+    width: '100%',
+  },
+  appIcon: {
+    height: '100px',
+    width: '100px',
+    display: 'inline-block',
+    border: '0.5px solid #E0E0E0',
+    borderRadius: '20px',
+    padding: '20px'
+  },
+  appTextData: {
+    display: 'inline-block',
+    position: 'absolute',
+    height: '100px',
+    width: 'calc(100vw - 130px)'
+  },
+  appName: {
+    fontWeight: 400,
+    fontSize: '16px',
+    margin: '10px 0 0 10px'
+  },
+  appDeveloper: {
+    fontSize: '13px',
+    marginLeft: '10px'
+
+  },
+  installButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+
+    borderRadius: '5px',
+    padding: '5px 10px',
+    fontSize: '13px',
+    color: '#2196F3',
+    border: '1px solid #2196F3'
+  },
+  appDescriptionTitle: {
+    fontSize: '16px',
+    fontWeight: 400
+  },
+  appDescription: {
+    fontSize: '14px',
+    lineHeight: '16px',
+    marginTop: '5px'
+  }
+}
+
 class AppInfo extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false
     }
-  }
-
-  handleOpen() {
-    this.setState({open: true});
-  }
-
-  handleClose() {
-    this.setState({open: false});
   }
   
   render() {
     return (
-      <div>
-        <div className="appBox" onTouchTap={this.handleOpen.bind(this)}>
-          <img src={this.props.iconLink} className="appIcon" />
-          <div className="appIconData">
-            <div className="appName">{this.props.name}</div>
+      <div style={{height: '100%', padding: '15px', fontFamily: 'sans-serif', fontWeight: 300}}>
+        <div style={styles.appData}>
+          <img style={styles.appIcon} src={this.props.iconLink} />
+          <div style={styles.appTextData}>
+            <div style={styles.appName}>{this.props.name}</div>
+            <div style={styles.appDeveloper}>{this.props.developer}</div>
+            <div style={styles.installButton}>Install</div>
           </div>
-
-          {/*<div className="appVersion">{props.version}</div>*/}
-          {/*<div className="appDeveloper">{props.developer}</div>*/}
-          {/*<div className="appDescription">{props.description}</div>*/}
         </div>
-        <Dialog
-          title={this.props.name}
-          modal={false}
-          open={this.state.open}
-          onRequestClose={this.handleClose.bind(this)}
-        >
-         The actions in this window were passed in as an array of React objects.
-        </Dialog>
+        <div style={styles.appDescriptionTitle}>Description</div>
+        <div style={styles.appDescription}>{this.props.description}</div>
       </div>
     )
   } 

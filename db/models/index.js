@@ -1,13 +1,13 @@
 // This file makes all join table relationships
 const Sequelize = require('sequelize');
 
-var db = process.env.db;
-var dbUser = process.env.dbUser;
+var db = process.env.db; //iSearch
+var dbUser = process.env.dbUser; //
 var dbPassword = process.env.dbPassword;
 var dbHost = process.env.dbHost;
 
 const sequelize = new Sequelize(db, dbUser, dbPassword, {
-  dialect: 'mariadb',
+  dialect: 'mysql',
   host: dbHost
 });
 

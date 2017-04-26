@@ -34,7 +34,9 @@ var classifierMaker = function(apps, callback) {
 
     forEachAsync(apps, function(next1, appName, index) {
       appController.findOne({where: {name: appName}}, function(app) {
-
+        if(!app) {
+          return;
+        }
         classifiers[app.get('htmlLink')] = {
           intentClassifier: new natural.BayesClassifier(),
           commandClassifiers: {}

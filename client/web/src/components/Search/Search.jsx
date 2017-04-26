@@ -1,65 +1,86 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
-import $ from 'jquery';
 
-import Results from './Results.jsx';
 import Result from './Result.jsx';
-import AppCard from './AppCard.jsx';
-import 'materialize-css';
 
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import axios from 'axios';
+
 import TextField from 'material-ui/TextField';
+import AutoComplete from 'material-ui/AutoComplete';
 import RaisedButton from 'material-ui/RaisedButton';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+
+const styles = {
+  textField: {
+    // width: '90%',
+    margin: '10px 0'
+  },
+  results: {
+    width: '90%',
+    margin: '10px 0'
+  }
+}
 
 class Search extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
       query: '',
-      apps: [],
+      autoSuggest: [],
       searchResults: []
     }
   }
 
   componentDidMount () {
-    $.get({
-      url: '/apps',
-      success: data => {
-        console.log('success!', data)
-        this.setState({apps: data})
-      },
-      error: error => {
-        console.error('error in get upload', error);
-      }
-    });
+
   }
 
 
   getSearchResults (e) {
-    e.preventDefault()
+    if (e) {
+      // e.preventDefault()      
+    }
     let self = this;
 
     if (this.state.query !== '') {
-      $.get({
-        url: '/webSearch',
-        data: {q: this.state.query},
-        success: function(data) {
-
-          console.log('Success!', data);
-
-          self.setState({
-            apps: data.apps,
-            searchResults: data.results
-          });
-        },
-        error: function(error) {
-          console.log(error)
-        }
+      axios.get('/search?q='+this.state.query)
+      .then(function (response) {
+        self.setState({
+          searchResults: response.data.webPages.value
+        })
+      })
+      .catch(function (error) {
+        console.log(error);
       });
-    } else {
-      console.log('request not sent')
+    }
+  }
+
+  getAutoSuggestData (query) {
+    let self = this;
+
+    if (this.state.query !== '') {
+      axios('/autoSuggest?q='+query)
+      .then(function (response) {
+        var autoSuggestData = response.data.suggestionGroups[0].searchSuggestions.map(function(suggestion, index) {
+          return suggestion.displayText;
+        })
+        self.setState({
+          autoSuggest: autoSuggestData
+        })
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    }
+  }
+
+  handleChange (value) {
+    var self = this;
+    if (value.indexOf(' ') > 0) {
+      this.setState({
+        query: value
+      }, () => {
+        self.getAutoSuggestData(value)        
+      })  
     }
   }
 
@@ -67,22 +88,15 @@ class Search extends React.Component {
 
     let self = this;
 
-    var apps = this.state.apps.map((app, index) => {
-      return <AppCard htmlLink={app.htmlLink} key={index}/>;
-    });
-
     var searchResults = this.state.searchResults.map((result, index) => {
       return (<Result name={result.name} displayUrl={result.displayUrl} snippet={result.snippet} key={index}/>);
     });
 
     return (
-      <div id="searchPage">
-        <div id="resultsBody">
-
-          <div id="apps">{apps}</div>
-          <div id="searchResults">
-            {searchResults}
-          </div>
+      <div style={{padding: '0 5%', wordWrap: 'break-word'}}>
+          <AutoComplete dataSource={this.state.autoSuggest} onUpdateInput={this.handleChange.bind(this)} onNewRequest={this.getSearchResults.bind(this)} hintText="Search the web" style={styles.textField} underlineFocusStyle={{borderColor: '#2196F3'}} fullWidth={true} />
+        <div style={styles.results}>
+          {searchResults}
         </div>
       </div>
     )

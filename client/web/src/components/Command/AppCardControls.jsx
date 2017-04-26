@@ -1,18 +1,17 @@
 import React from 'react';
-import $ from 'jquery';
 
 let appExpanded = false;
 
 const expandAppCard = (e) => {
-  if (!appExpanded) {
-    $(e.target).parent().prev().animate({height: '500px'}, 250);
-    $(e.target).css({'transform' : 'rotate(180deg)'});
-    appExpanded = true;
-  } else {
-    $(e.target).parent().prev().animate({height: '200px'}, 250);
-    $(e.target).css({'transform' : 'rotate(360deg)'});
-    appExpanded = false;
-  }
+  // if (!appExpanded) {
+  //   $(e.target).parent().prev().animate({height: '500px'}, 250);
+  //   $(e.target).css({'transform' : 'rotate(180deg)'});
+  //   appExpanded = true;
+  // } else {
+  //   $(e.target).parent().prev().animate({height: '200px'}, 250);
+  //   $(e.target).css({'transform' : 'rotate(360deg)'});
+  //   appExpanded = false;
+  // }
 }
 
 export default props => {

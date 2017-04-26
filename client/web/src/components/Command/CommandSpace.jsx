@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router';
-import $ from 'jquery';
 import axios from 'axios';
 import TextField from 'material-ui/TextField';
 
@@ -10,8 +9,8 @@ import MenuItem from 'material-ui/MenuItem';
 import AppCard from './AppCard.jsx';
 
 
-import io from 'socket.io-client';
-let socket = io('http://10.0.1.2:8000')
+// import io from 'socket.io-client';
+// let socket = io('http://localhost:8080')
 
 const dataSource1 = [
   {
@@ -52,29 +51,29 @@ class Command extends React.Component {
     // axios.get('/bla').then(function(response) {
     //   console.log(response.obj)
     // })
-    var self = this
+    // var self = this
     
-    socket.on('response', function(app) {
-      if(app) {
-        var appIsThere = false;
-        var appIndex;
-        for (var i = 0; i < self.state.apps.length; i++) {
-          if (self.state.apps[i].split('?')[0] === app.split('?')[0]) {
-            appIsThere = true;
-            appIndex = i
-            break;
-          }
-        }
-        if (appIsThere) {
-          self.state.apps.splice(appIndex, 1)
-        }
-        self.state.apps.unshift(app);
-        self.setState({
-          apps: self.state.apps,
-          command: ''
-        });
-      }
-    })
+    // socket.on('response', function(app) {
+    //   if(app) {
+    //     var appIsThere = false;
+    //     var appIndex;
+    //     for (var i = 0; i < self.state.apps.length; i++) {
+    //       if (self.state.apps[i].split('?')[0] === app.split('?')[0]) {
+    //         appIsThere = true;
+    //         appIndex = i
+    //         break;
+    //       }
+    //     }
+    //     if (appIsThere) {
+    //       self.state.apps.splice(appIndex, 1)
+    //     }
+    //     self.state.apps.unshift(app);
+    //     self.setState({
+    //       apps: self.state.apps,
+    //       command: ''
+    //     });
+    //   }
+    // })
   }
 
   setCommandState (event) {
