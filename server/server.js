@@ -4,6 +4,7 @@ var app = express();
 var request = require('request');
 
 require('dotenv').config();
+var port = process.env.Port
 var bingSearchApiKey = process.env.bingSearchApiKey;
 var bingAutoSuggestApiKey = process.env.bingAutoSuggestApiKey;
 var secret = process.env.Secret;
@@ -204,6 +205,6 @@ app.get('/apps', function(req, res) {
 
 app.use(express.static(path.join(__dirname, '../client')));
 
-app.listen(3000, function() {
+app.listen(port, function() {
   console.log('listening on port 3000!');
 });
